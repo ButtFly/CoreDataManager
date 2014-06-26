@@ -7,6 +7,8 @@
 //
 
 #import "SLYViewController.h"
+#import "SLYCoreDataManager.h"
+#import "SLYTest.h"
 
 @interface SLYViewController ()
 
@@ -18,6 +20,9 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+    SLYCoreDataManager * manager = [SLYCoreDataManager managerWithManagedObjectModelResource:@"Model"];
+    NSError * error;
+    [manager prepare:&error];
 }
 
 - (void)didReceiveMemoryWarning

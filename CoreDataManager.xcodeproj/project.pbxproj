@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6508991D193594EF00F5CA60 /* SLYTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 6508991C193594EF00F5CA60 /* SLYTest.m */; };
 		65955D1919342E010000503A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65955D1819342E010000503A /* Foundation.framework */; };
 		65955D1B19342E010000503A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65955D1A19342E010000503A /* CoreGraphics.framework */; };
 		65955D1D19342E010000503A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65955D1C19342E010000503A /* UIKit.framework */; };
@@ -21,6 +22,8 @@
 		65955D3A19342E010000503A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 65955D1C19342E010000503A /* UIKit.framework */; };
 		65955D4219342E010000503A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 65955D4019342E010000503A /* InfoPlist.strings */; };
 		65955D4419342E010000503A /* CoreDataManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 65955D4319342E010000503A /* CoreDataManagerTests.m */; };
+		65955D5319342E830000503A /* SLYCoreDataManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 65955D5219342E830000503A /* SLYCoreDataManager.m */; };
+		65BA25AA195C103800B8914F /* Model.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 65BA25A8195C103800B8914F /* Model.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,6 +37,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6508991B193594EF00F5CA60 /* SLYTest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SLYTest.h; sourceTree = "<group>"; };
+		6508991C193594EF00F5CA60 /* SLYTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SLYTest.m; sourceTree = "<group>"; };
 		65955D1519342E010000503A /* CoreDataManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CoreDataManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		65955D1819342E010000503A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		65955D1A19342E010000503A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -53,6 +58,9 @@
 		65955D3F19342E010000503A /* CoreDataManagerTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CoreDataManagerTests-Info.plist"; sourceTree = "<group>"; };
 		65955D4119342E010000503A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		65955D4319342E010000503A /* CoreDataManagerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CoreDataManagerTests.m; sourceTree = "<group>"; };
+		65955D5119342E830000503A /* SLYCoreDataManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SLYCoreDataManager.h; path = CoreDataManager/SLYCoreDataManager.h; sourceTree = "<group>"; };
+		65955D5219342E830000503A /* SLYCoreDataManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SLYCoreDataManager.m; path = CoreDataManager/SLYCoreDataManager.m; sourceTree = "<group>"; };
+		65BA25A9195C103800B8914F /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -117,8 +125,12 @@
 				65955D2A19342E010000503A /* Main.storyboard */,
 				65955D2D19342E010000503A /* SLYViewController.h */,
 				65955D2E19342E010000503A /* SLYViewController.m */,
+				6508991B193594EF00F5CA60 /* SLYTest.h */,
+				6508991C193594EF00F5CA60 /* SLYTest.m */,
+				65955D4D19342E310000503A /* CoreDataManager */,
 				65955D3019342E010000503A /* Images.xcassets */,
 				65955D1F19342E010000503A /* Supporting Files */,
+				65BA25A8195C103800B8914F /* Model.xcdatamodeld */,
 			);
 			path = CoreDataManager;
 			sourceTree = "<group>";
@@ -150,6 +162,15 @@
 				65955D4019342E010000503A /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		65955D4D19342E310000503A /* CoreDataManager */ = {
+			isa = PBXGroup;
+			children = (
+				65955D5119342E830000503A /* SLYCoreDataManager.h */,
+				65955D5219342E830000503A /* SLYCoreDataManager.m */,
+			);
+			name = CoreDataManager;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -251,8 +272,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				65955D2519342E010000503A /* main.m in Sources */,
+				65955D5319342E830000503A /* SLYCoreDataManager.m in Sources */,
 				65955D2F19342E010000503A /* SLYViewController.m in Sources */,
+				6508991D193594EF00F5CA60 /* SLYTest.m in Sources */,
 				65955D2919342E010000503A /* SLYAppDelegate.m in Sources */,
+				65BA25AA195C103800B8914F /* Model.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -457,6 +481,7 @@
 				65955D4919342E010000503A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		65955D4A19342E010000503A /* Build configuration list for PBXNativeTarget "CoreDataManagerTests" */ = {
 			isa = XCConfigurationList;
@@ -465,8 +490,22 @@
 				65955D4C19342E010000503A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		65BA25A8195C103800B8914F /* Model.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				65BA25A9195C103800B8914F /* Model.xcdatamodel */,
+			);
+			currentVersion = 65BA25A9195C103800B8914F /* Model.xcdatamodel */;
+			path = Model.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 65955D0D19342E010000503A /* Project object */;
 }
