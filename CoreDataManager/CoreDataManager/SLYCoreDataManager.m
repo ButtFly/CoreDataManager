@@ -163,6 +163,23 @@ static BOOL kIsRightInit = NO;
 
 #pragma mark - copy container
 
+#pragma mark - insert
 
+- (NSManagedObject *)insertNewObjectForEntityForName:(NSString *)entityName
+{
+    return [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:_managedObjectContext];
+}
+
+#pragma mark - save
+
+- (BOOL)saveContext:(NSError *__autoreleasing *)error
+{
+    if ([_managedObjectContext hasChanges]) {
+        return [_managedObjectContext save:error];
+    }
+    else {
+        return YES;
+    }
+}
 
 @end

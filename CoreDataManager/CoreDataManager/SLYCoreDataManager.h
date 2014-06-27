@@ -13,7 +13,9 @@
 @property (nonatomic, strong, readonly) NSManagedObjectContext * managedObjectContext;
 @property (nonatomic, strong, readonly) NSURL * modelURL;
 @property (nonatomic, strong, readonly) NSURL * storeURL;
+/**
 @property (nonatomic, copy) NSDictionary * migrationOptions;
+ */
 
 /**
  创建并返回一个 'SLYCoreDataManager'。
@@ -44,6 +46,17 @@
  在使用之前，必须先调用此方法
  */
 - (BOOL)prepare:(NSError **)error;
+
+/**
+ 保存
+ */
+- (BOOL)saveContext:(NSError **)error;
+
+/**
+ 查询
+ */
+
+- (NSManagedObject *)insertNewObjectForEntityForName:(NSString *)entityName;
 
 
 @end
