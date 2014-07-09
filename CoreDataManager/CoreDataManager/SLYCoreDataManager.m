@@ -12,6 +12,10 @@
 
 @property (nonatomic, strong, readonly) NSManagedObjectModel * managedObjectModel;
 @property (nonatomic, strong, readonly) NSPersistentStoreCoordinator * persistentStoreCoordinator;
+@property (nonatomic, strong, readonly) NSManagedObjectContext * managedObjectContext;
+/**
+@property (nonatomic, strong, readonly) NSMutableDictionary * managedObjectContexts;
+ */
 
 @end
 
@@ -75,6 +79,7 @@ static BOOL kIsRightInit = NO;
     if (self) {
         _modelURL = modelURL;
         _storeURL = storeURL;
+        
     }
     kIsRightInit = NO;
     return self;
@@ -85,8 +90,6 @@ static BOOL kIsRightInit = NO;
     NSAssert(kIsRightInit, @"请不要直接用init初始化。");
     return [super init];
 }
-
-#pragma mark - Prepare
 
 - (BOOL)prepare:(NSError *__autoreleasing *)error
 {
@@ -104,32 +107,29 @@ static BOOL kIsRightInit = NO;
 
 - (BOOL)initPersistentStoreCoordinator:(NSError *__autoreleasing *)error
 {
-    NSError * resultErr = nil;
     BOOL isSuccess = YES;
     if (_persistentStoreCoordinator) {
         isSuccess = NO;
-        resultErr = [NSError errorWithDomain:@"SLYManagerDomain" code:1001 userInfo:nil];
+        *error = [NSError errorWithDomain:@"SLYManagerDomain" code:1001 userInfo:nil];
     }
     else {
         _persistentStoreCoordinator = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:_managedObjectModel];
         isSuccess = [_persistentStoreCoordinator addPersistentStoreWithType:NSSQLiteStoreType
-                                                  configuration:nil
-                                                            URL:_storeURL
-                                                        options:defaultMigrationOptions()
-                                                          error:error
-         ];
+                                                              configuration:nil
+                                                                        URL:_storeURL
+                                                                    options:defaultMigrationOptions()
+                                                                      error:error
+                     ];
     }
-    *error = resultErr;
     return isSuccess;
 }
 
 - (BOOL)initManagedObjectModel:(NSError *__autoreleasing *)error
 {
-    NSError * resultErr = nil;
     BOOL isSuccess = YES;
     if (_managedObjectModel) {
         isSuccess = NO;
-        resultErr = [NSError errorWithDomain:@"SLYManagerDomain" code:1001 userInfo:nil];
+        *error = [NSError errorWithDomain:@"SLYManagerDomain" code:1001 userInfo:nil];
     }
     else {
         _managedObjectModel = [[NSManagedObjectModel alloc] initWithContentsOfURL:_modelURL];
@@ -140,11 +140,10 @@ static BOOL kIsRightInit = NO;
 
 - (BOOL)initManagerObjectContext:(NSError *__autoreleasing *)error
 {
-    NSError * resultErr = nil;
     BOOL isSuccess = YES;
     if (_managedObjectContext) {
         isSuccess = NO;
-        resultErr = [NSError errorWithDomain:@"SLYManagerDomain" code:1001 userInfo:nil];
+        *error = [NSError errorWithDomain:@"SLYManagerDomain" code:1001 userInfo:nil];
     }
     else {
         _managedObjectContext = [[NSManagedObjectContext alloc] init];
@@ -161,16 +160,17 @@ static BOOL kIsRightInit = NO;
     return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
 }
 
-#pragma mark - copy container
-
-#pragma mark - insert
+#pragma mark - Execute fetch
 
 - (NSManagedObject *)insertNewObjectForEntityForName:(NSString *)entityName
 {
     return [NSEntityDescription insertNewObjectForEntityForName:entityName inManagedObjectContext:_managedObjectContext];
 }
 
-#pragma mark - save
+- (void)deleteObject:(NSManagedObject *)object
+{
+    [_managedObjectContext deleteObject:object];
+}
 
 - (BOOL)saveContext:(NSError *__autoreleasing *)error
 {
@@ -180,6 +180,55 @@ static BOOL kIsRightInit = NO;
     else {
         return YES;
     }
+}
+
+- (NSManagedObjectContext *)defaultManagedObjectContext
+{
+    return _managedObjectContext;
+}
+
+- (NSArray *)objectsWithFetchRequest:(NSFetchRequest *)fetchRequest error:(NSError *__autoreleasing *)error
+{
+    return [_managedObjectContext executeFetchRequest:fetchRequest error:error];
+}
+
+- (NSArray *)objectsWithValue:(id)value forKeyPath:(id)keyPath forEntityForName:(NSString *)entityName error:(NSError *__autoreleasing *)error
+{
+    return [self objectsWithProperties:@{keyPath: value} forEntityForName:entityName error:error];
+}
+
+- (NSArray *)objectsWithProperties:(NSDictionary *)properties forEntityForName:(NSString *)entityName error:(NSError *__autoreleasing *)error
+{
+    return [self objectsWithProperties:properties forEntityForName:entityName fetchLimit:0 fetchOffset:0 sortDescriptors:nil error:error];
+}
+
+- (NSArray *)objectsWithProperties:(NSDictionary *)properties forEntityForName:(NSString *)entityName fetchLimit:(NSUInteger)fetchLimit fetchOffset:(NSUInteger)fetchOffset sortDescriptors:(NSArray *)sortDescriptors error:(NSError *__autoreleasing *)error
+{
+    NSFetchRequest * request = [NSFetchRequest fetchRequestWithEntityName:entityName];
+    NSMutableString * formatStr = [NSMutableString stringWithFormat:@""];
+    NSMutableDictionary * variables = [NSMutableDictionary dictionary];
+    [properties.allKeys enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        id value = [properties objectForKey:obj];
+        if ([value isKindOfClass:[NSString class]]) {
+            [formatStr appendFormat:@"&& %@ == \"%@\"", obj, value];
+        }
+        else if ([value isKindOfClass:[NSValue class]]) {
+            [formatStr appendFormat:@"&& %@ == %@", obj, value];
+        }
+        else if ([value isKindOfClass:[NSDate class]]) {
+            [formatStr appendFormat:@"&& %@ == $%@", obj, obj];
+            [variables setObject:value forKey:obj];
+        }
+        if (!idx) {
+            [formatStr deleteCharactersInRange:NSMakeRange(0, 3)];
+        }
+    }];
+    NSPredicate * predicate = [NSPredicate predicateWithFormat:formatStr];
+    [request setPredicate:[predicate predicateWithSubstitutionVariables:variables]];
+    [request setFetchLimit:fetchLimit];
+    [request setFetchOffset:fetchOffset];
+    [request setSortDescriptors:sortDescriptors];
+    return [self objectsWithFetchRequest:request error:error];
 }
 
 @end

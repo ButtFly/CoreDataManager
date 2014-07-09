@@ -33,7 +33,7 @@
     NSFetchRequest * request = [NSFetchRequest fetchRequestWithEntityName:@"People"];
     NSSortDescriptor * nameSort = [NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES];
     [request setSortDescriptors:@[nameSort]];
-    self.resultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:_manager.managedObjectContext sectionNameKeyPath:nil cacheName:nil];
+    self.resultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:request managedObjectContext:[_manager defaultManagedObjectContext] sectionNameKeyPath:nil cacheName:nil];
     [_resultsController setDelegate:self];
     [_resultsController performFetch:nil];
 }
@@ -46,14 +46,23 @@
 - (IBAction)addAction:(UIButton *)sender
 {
     NSManagedObject * newPeople = [_manager insertNewObjectForEntityForName:@"People"];
-    [newPeople setValue:[[NSDate date] description] forKeyPath:@"name"];
+    [newPeople setValue:@"Li" forKeyPath:@"name"];
+    [newPeople setValue:[NSDate dateWithTimeIntervalSince1970:0] forKey:@"birthday"];
+    [newPeople setValue:@108.888888888888 forKey:@"height"];
+}
+- (IBAction)selectAction:(UIButton *)sender
+{
+    NSArray * results = [_manager objectsWithValue:@"Li" forKeyPath:@"name" forEntityForName:@"People" error:nil];
+    [results enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        NSLog(@"%lu, %@", (unsigned long)idx, [obj valueForKeyPath:@"name"]);
+    }];
 }
 
 - (void)controller:(NSFetchedResultsController *)controller didChangeObject:(id)anObject atIndexPath:(NSIndexPath *)indexPath forChangeType:(NSFetchedResultsChangeType)type newIndexPath:(NSIndexPath *)newIndexPath
 {
     NSLog(@"%@", [anObject valueForKeyPath:@"name"]);
     NSError * error;
-    [_manager.managedObjectContext save:&error];
+    [_manager saveContext:&error];
     NSLog(@"%@", error);
 }
 
